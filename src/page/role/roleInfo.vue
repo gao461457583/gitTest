@@ -31,21 +31,23 @@
         ></el-switch>
       </el-form-item>
       <el-button type="info" class="cancle">取消</el-button>
-      <el-button type="primary" @click="add" v-if="!$route.params.id">添加</el-button>
-      <el-button type="primary" @click="edit" v-else >修改</el-button>
+      <el-button type="primary" @click="add" v-if="!$route.params.id"
+        >添加</el-button
+      >
+      <el-button type="primary" @click="edit" v-else>修改</el-button>
     </el-form>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { addRole, getRoleInfo,editRoleInfo } from "../../util/request";
+import { addRole, getRoleInfo, editRoleInfo } from "../../util/request";
 export default {
   data() {
     return {
       ruleForm: {
         rolename: "",
         status: 1,
-        menus: [],
+        menus: "[]",
       },
       rules: {
         rolename: [
@@ -71,22 +73,22 @@ export default {
     ...mapActions({
       amenuList: "amenuList",
     }),
+    //添加
     add() {
-        //获取树形控件中所被选中的id
+      //获取树形控件中所被选中的id
       this.ruleForm.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
-      console.log(this.ruleForm);
       addRole(this.ruleForm).then((res) => {
         this.$router.back();
       });
     },
     //点击修改
-    edit(){
-        this.ruleForm.id=Number(this.$route.params.id)
-        editRoleInfo(this.ruleForm).then(res=>{
-            console.log(res);
-            this.$router.back()
-        })
-    }
+    edit() {
+      this.ruleForm.id = this.$route.params.id;
+      this.ruleForm.menus = JSON.stringify(this.$refs.tree.getCheckedKeys());
+      editRoleInfo(this.ruleForm).then((res) => {
+        this.$router.back();
+      });
+    },
   },
 
   watch: {},
@@ -97,7 +99,7 @@ export default {
       getRoleInfo(this.$route.params.id).then((res) => {
         this.ruleForm = res.data.list;
         //设置属性控件
-        this.$refs.tree.setCheckedKeys(JSON.parse(res.data.list.menus))
+        this.$refs.tree.setCheckedKeys(JSON.parse(res.data.list.menus));
       });
     }
   },
@@ -108,7 +110,7 @@ export default {
   width: 450px;
 }
 
-.cancle{    
-    margin-left: 100px;
+.cancle {
+  margin-left: 100px;
 }
 </style>

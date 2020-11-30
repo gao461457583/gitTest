@@ -109,14 +109,9 @@
         </template>
       </el-form-item>
 
+      <!-- ===============富文本======================================= -->
       <el-form-item label="商品描述">
-        <textarea
-          name=""
-          id=""
-          cols="30"
-          rows="10"
-          v-model="ruleForm.description"
-        ></textarea>
+        <div id="div1"></div>
       </el-form-item>
 
       <el-form-item label="状态" prop="status">
@@ -142,6 +137,10 @@ import {
   editGoodsInfo,
   addGoods,
 } from "../../util/request";
+
+//引入富文本
+import E from "wangeditor";
+
 export default {
   data() {
     return {
@@ -170,6 +169,9 @@ export default {
   methods: {
     //点击确定按钮
     add() {
+      //富文本
+      this.ruleForm.description = this.editor.txt.html();
+
       if (!this.$route.params.id) {
         //添加
         this.ruleForm.specsattr = JSON.stringify(this.ruleForm.specsattr);
@@ -225,14 +227,27 @@ export default {
     specsList().then((res) => {
       this.specs = res.data.list;
     });
-    //修改
+    //点击修改时 自动请求列表
     if (this.$route.params.id) {
       getGoodsInfo(this.$route.params.id).then((res) => {
+        
         this.ruleForm = res.data.list;
+        
+        //富文本======================================
+        this.editor.txt.html(this.ruleForm.description);
+
         this.ruleForm.specsattr = JSON.parse(this.ruleForm.specsattr);
         this.imageUrl = res.data.list.img;
+        // 渲染二级下拉框
+        cateList({ pid: this.ruleForm.first_cateid }).then((res) => {
+          this.seList = res.data.list;
+        });
       });
     }
+    //创建富文本
+    this.editor = new E("#div1");
+    this.editor.create();
+    
   },
 };
 </script>

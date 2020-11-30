@@ -35,7 +35,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')"
+          <el-button type="primary" @click="login"
             >立即登录</el-button
           >
         </el-form-item>
@@ -45,23 +45,33 @@
 </template>
 
 <script>
+import {mapActions,mapGetters} from "vuex"
+import {reqLogin} from "../../util/request"
+import {successAlert,warningAlert} from "../../util/alter"
 export default {
+  computed:{
+    ...mapGetters({
+      userInfo:"userInfo"
+    })
+  },
   methods: {
-    //点击按钮先校验，成功后才会发请求
-    submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       //   alert("submit!");
-    //       this.gotoLogin();
-    //     } else {
-    //       console.log("error submit!!");
-    //       return false;
-    //     }
-    //   });
-    },
-    // gotoLogin() {
-    //   this.$http.post("/login", data).then((res) => {});
-    // },
+    ...mapActions({
+      reqUserInfoAction:"reqUserInfoAction"
+    }),
+    //登录
+    login(){
+    reqLogin(this.ruleForm).then(res=>{
+      if(res.data.code==200){
+        successAlert(res.data.msg)
+        // 1.将res.data.list存入到状态层
+        this.reqUserInfoAction(res.data.list)
+        // 2.进入主页
+        this.$router.push("/")
+      }else{
+        warningAlert(res.data.msg)
+      }
+    })
+    }
   },
   data() {
     return {

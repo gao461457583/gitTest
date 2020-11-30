@@ -7,13 +7,16 @@
       <el-container>
         <el-header class="header">
           <p>
-            <i>admin</i>
-            <i class="el-icon-setting"></i>
+            <i>{{userInfo.username}}</i>
+            <el-button @click="logOut">退出</el-button>
           </p>
         </el-header>
         <el-main>
           <!-- 面包屑 -->
-          <el-breadcrumb separator-class="el-icon-arrow-right" class="el-icon-arrow-right">
+          <el-breadcrumb
+            separator-class="el-icon-arrow-right"
+            class="el-icon-arrow-right"
+          >
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>{{ $route.name }}</el-breadcrumb-item>
           </el-breadcrumb>
@@ -25,6 +28,7 @@
 </template>
 <script>
 import vAside from "./vaside";
+import { mapActions, mapGetters } from "vuex";
 export default {
   components: {
     vAside,
@@ -32,7 +36,23 @@ export default {
   data() {
     return {};
   },
-  methods: {},
+  computed: {
+    ...mapGetters({
+      userInfo: "userInfo"
+    }),
+  },
+  methods: {
+    ...mapActions({
+      reqUserInfoAction: "reqUserInfoAction",
+    }),
+
+    logOut() {
+      //清空状态层的userInfo
+      this.reqUserInfoAction({})
+      //跳到登陆页
+      this.$router.push("/login")
+    },
+  },
   watch: {},
   mounted() {},
 };
@@ -46,7 +66,7 @@ export default {
   line-height: 50px;
   text-align: end;
 }
-.el-icon-arrow-right{
+.el-icon-arrow-right {
   margin-bottom: 20px;
 }
 </style>

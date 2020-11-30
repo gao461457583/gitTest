@@ -10,49 +10,53 @@
         unique-opened
         router
       >
-         <el-menu-item index="/">
+        <el-menu-item index="/">
           <i class="el-icon-setting"></i>
           <span slot="title">首页</span>
         </el-menu-item>
-        <!-- 系统设置 -->
-        <el-submenu index="2">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>系统设置</span>
-          </template> 
-          <el-menu-item-group>
-            <el-menu-item index="/menu">菜单管理</el-menu-item>
-            <el-menu-item index="/role">角色管理</el-menu-item>
-            <el-menu-item index="/manage">管理员管理</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-        <!-- 商城管理 -->
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>商城管理</span>
-          </template> 
-          <el-menu-item-group>
-            <el-menu-item index="/cate">商品分类</el-menu-item>
-            <el-menu-item index="/specs">商品规格</el-menu-item>
-            <el-menu-item index="/goods">商品管理</el-menu-item>
-            <el-menu-item index="/member">会员管理</el-menu-item>
-            <el-menu-item index="/banner">轮播图管理</el-menu-item>
-            <el-menu-item index="/seckill">秒杀活动</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
         
-        
+        <div  v-for="item in userInfo.menus" :key="item.id">
+          <!-- 目录 -->
+          <!-- 需要给:index="item.id" 转换成字符串，拼接上''就行（隐式转换） -->
+          <el-submenu :index="item.id+''" v-if="item.children">
+            <template slot="title">
+              <i :class="item.icon"></i>
+              <span>{{item.title}}</span>
+            </template>
+            <el-menu-item-group>
+              <!-- 这里index指的是跳转路径 -->
+              <el-menu-item  v-for="i in item.children" :key="i.id" :index="i.url">
+                <span>{{i.title}}</span>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+          <!-- 菜单 -->
+          <el-menu-item :index="item.url" v-else>
+            <span>{{item.title}}</span>
+          </el-menu-item>
+        </div>
       </el-menu>
     </el-col>
   </div>
 </template>
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   data() {
     return {};
   },
-  methods: {},
+  computed: {
+    ...mapGetters({
+      userInfo: "userInfo",
+    }),
+  },
+  methods: {
+    ...mapActions({
+      reqUserInfoAction: "reqUserInfoAction",
+    }),
+  },
   watch: {},
   mounted() {},
 };
@@ -62,13 +66,13 @@ export default {
   height: 100vh;
   width: 100%;
 }
-.el-submenu .el-menu-item{
-    text-align: center;
+.el-submenu .el-menu-item {
+  text-align: center;
 }
-.el-menu-item-group{
+.el-menu-item-group {
   margin-top: -20px;
 }
-.box{
+.box {
   overflow-x: hidden;
 }
 </style>
